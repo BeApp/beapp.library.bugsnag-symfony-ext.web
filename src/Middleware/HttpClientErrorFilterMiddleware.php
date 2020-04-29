@@ -35,15 +35,40 @@ class HttpClientErrorFilterMiddleware
             /** @var HttpException $httpException */
             $httpException = $report->getOriginalError();
 
-            foreach ($this->excludedHttpCodes as $excludedHttpCode) {
-                if ($httpException->getStatusCode() === $excludedHttpCode) {
-                    return;
-                }
+            if ($this->shouldExclude($httpException->getStatusCode())) {
+                return;
             }
         }
 
         $next($report);
     }
 
+    /**
+     * @param int $statusCode
+     * @return bool
+     */
+    private function shouldExclude($statusCode)
+    {
+        foreach ($this->excludedHttpCodes as $excludedHttpCode) {
+            if (is_int($excludedHttpCode) && $statusCode === $excludedHttpCode) {
+                return true;
+            } else if (is_string($excludedHttpCode) && $this->matchGlobStatus($statusCode, $excludedHttpCode)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param int $statusCode
+     * @param string $globPattern
+     * @return bool
+     */
+    private function matchGlobStatus($statusCode, $globPattern)
+    {
+        $pattern = "#" . str_replace("x", "\\d", $globPattern) . "#";
+        return preg_match($pattern, $statusCode);
+    }
 
 }

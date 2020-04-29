@@ -34,7 +34,7 @@ class Configuration implements ConfigurationInterface
             ->defaultValue([])
             ->end()
             ->arrayNode('excluded_http_codes')
-            ->prototype('integer')->end()
+            ->prototype('scalar')->end()
             ->treatNullLike([])
             ->defaultValue([])
             ->end()
