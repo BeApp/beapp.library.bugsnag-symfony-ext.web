@@ -1,0 +1,28 @@
+services:
+  bugsnag_ext.factory_decorator:
+    class: 'Beapp\Bugsnag\Ext\Factory\ClientExtFactory'
+    decorates: 'bugsnag.factory'
+    arguments:
+      - '@bugsnag_ext.factory_decorator.inner'
+      - '@bugsnag_ext.middleware.handled_error'
+      - '@bugsnag_ext.middleware.http_client_error'
+
+  # Middleware
+  bugsnag_ext.middleware.handled_error:
+    class: 'Beapp\Bugsnag\Ext\Middleware\HandledErrorMiddleware'
+    arguments:
+      - '%bugsnag_ext.handled_exceptions%'
+
+  bugsnag_ext.middleware.http_client_error:
+    class: 'Beapp\Bugsnag\Ext\Middleware\HttpClientErrorFilterMiddleware'
+    arguments:
+      - '%bugsnag_ext.excluded_http_codes%'
+
+  # Listeners
+  bugsnag_ext.listener.session_per_request:
+    class: 'Beapp\Bugsnag\Ext\Listener\SessionBugsnagListener'
+    arguments:
+      - '@bugsnag'
+      - '%bugsnag_ext.session_per_request%'
+    tags:
+      - { name: "kernel.event_subscriber" }

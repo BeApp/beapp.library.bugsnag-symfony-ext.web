@@ -1,0 +1,37 @@
+{
+    "name": "beapp/bugsnag-symfony-ext",
+    "description": "Extensions for Bugsnag Symfony",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "keywords": [
+        "bugsnag",
+        "symfony",
+        "extensions"
+    ],
+    "authors": [
+        {
+            "name": "Damien Villeneuve",
+            "email": "d.villeneuve@beapp.fr"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "bugsnag/bugsnag-symfony": "^1.6",
+        "symfony/http-foundation": "^2.7|^3|^4|^5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Beapp\\Bugsnag\\Ext\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Beapp\\Bugsnag\\Ext\\": "tests"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
