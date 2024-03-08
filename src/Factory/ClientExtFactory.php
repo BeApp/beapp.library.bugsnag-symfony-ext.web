@@ -5,35 +5,22 @@ namespace Beapp\Bugsnag\Ext\Factory;
 use Beapp\Bugsnag\Ext\Middleware\HandledErrorMiddleware;
 use Beapp\Bugsnag\Ext\Middleware\HttpClientErrorFilterMiddleware;
 use Bugsnag\BugsnagBundle\DependencyInjection\ClientFactory;
+use Bugsnag\Client;
 
 class ClientExtFactory
 {
+    private ClientFactory $bugsnagClientFactory;
+    private HandledErrorMiddleware $handledErrorMiddleware;
+    private HttpClientErrorFilterMiddleware $httpClientErrorMiddleware;
 
-    /** @var ClientFactory */
-    private $bugsnagClientFactory;
-    /** @var HandledErrorMiddleware */
-    private $handledErrorMiddleware;
-    /** @var HttpClientErrorFilterMiddleware */
-    private $httpClientErrorMiddleware;
-
-    /**
-     * @param ClientFactory $bugsnagClientFactory
-     * @param HandledErrorMiddleware $handledErrorMiddleware
-     * @param HttpClientErrorFilterMiddleware $httpClientErrorMiddleware
-     */
-    public function __construct($bugsnagClientFactory, $handledErrorMiddleware, $httpClientErrorMiddleware)
+    public function __construct(ClientFactory $bugsnagClientFactory, HandledErrorMiddleware $handledErrorMiddleware, HttpClientErrorFilterMiddleware $httpClientErrorMiddleware)
     {
         $this->bugsnagClientFactory = $bugsnagClientFactory;
         $this->handledErrorMiddleware = $handledErrorMiddleware;
         $this->httpClientErrorMiddleware = $httpClientErrorMiddleware;
     }
 
-    /**
-     * Make a new client instance.
-     *
-     * @return \Bugsnag\Client
-     */
-    public function make()
+    public function make(): Client
     {
         $client = $this->bugsnagClientFactory->make();
 

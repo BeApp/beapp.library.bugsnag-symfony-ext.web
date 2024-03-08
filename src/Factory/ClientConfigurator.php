@@ -9,16 +9,15 @@ use Bugsnag\Client;
 class ClientConfigurator
 {
 
-    /** @var Client */
-    private $bugsnagClient;
+    private Client $bugsnagClient;
 
     /**
-     * @param Client $bugsnagClient
-     * @param HandledErrorMiddleware $handledErrorMiddleware
-     * @param HttpClientErrorFilterMiddleware $httpClientErrorMiddleware
-     * @param callable[] $extraMiddlewares
+     * @param array<callable> $extraMiddlewares
      */
-    public function __construct($bugsnagClient, $handledErrorMiddleware, $httpClientErrorMiddleware, $extraMiddlewares)
+    public function __construct(Client                          $bugsnagClient,
+                                HandledErrorMiddleware          $handledErrorMiddleware,
+                                HttpClientErrorFilterMiddleware $httpClientErrorMiddleware,
+                                array                           $extraMiddlewares)
     {
         $this->bugsnagClient = $bugsnagClient;
 

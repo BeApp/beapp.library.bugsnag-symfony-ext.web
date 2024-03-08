@@ -4,9 +4,9 @@ This library provides middleware and listeners to fit our own specific uses of [
 
 ## Requirements
 
-* `PHP >= 7.1`
-* `symfony >= 4.0`
-* `bugsnag/bugsnag-symfony >= 1.6`
+* `PHP >= 8.0`
+* `symfony >= 5.0`
+* `bugsnag/bugsnag-symfony >= 1.8`
 
 ## Installation
 

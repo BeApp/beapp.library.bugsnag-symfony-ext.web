@@ -11,13 +11,13 @@ use Bugsnag\Report;
 class HandledErrorMiddleware
 {
 
-    /** @var string[] */
-    private $handledExceptions;
+    /** @var array<string> */
+    private array $handledExceptions;
 
     /**
-     * @param string[] $handledExceptions Classname of exceptions to consider as handled, despite being thrown (usually handle with a Normalizer for API)
+     * @param array<string> $handledExceptions Classname of exceptions to consider as handled, despite being thrown (usually handle with a Normalizer for API)
      */
-    public function __construct($handledExceptions = [])
+    public function __construct(array $handledExceptions = [])
     {
         $this->handledExceptions = $handledExceptions;
     }
@@ -25,10 +25,9 @@ class HandledErrorMiddleware
     /**
      * @param Report $report the bugsnag report instance
      * @param callable $next the next stage callback
-     *
      * @return void
      */
-    public function __invoke(Report $report, callable $next)
+    public function __invoke(Report $report, callable $next): void
     {
         foreach ($this->handledExceptions as $handledException) {
             if (is_a($report->getOriginalError(), $handledException, true)) {

@@ -3,8 +3,6 @@
 namespace Beapp\Bugsnag\Ext\DependencyInjection;
 
 use Bugsnag\Client;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -20,13 +18,11 @@ class Configuration implements ConfigurationInterface
     /**
      * @inheritDoc
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NAME);
-        /** @var ArrayNodeDefinition $rootNode */
-        $rootNode = $this->getRootNode($treeBuilder);
 
-        $rootNode
+        $treeBuilder->getRootNode()
             ->children()
             ->arrayNode('handled_exceptions')
             ->prototype('scalar')->end()
@@ -46,23 +42,5 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         return $treeBuilder;
-    }
-
-    /**
-     * Returns the root node of TreeBuilder with backwards compatibility
-     * for pre-Symfony 4.1.
-     *
-     * @param TreeBuilder $treeBuilder a TreeBuilder to extract/create the root node
-     *                                 from
-     *
-     * @return NodeDefinition the root node of the config
-     */
-    protected function getRootNode(TreeBuilder $treeBuilder)
-    {
-        if (\method_exists($treeBuilder, 'getRootNode')) {
-            return $treeBuilder->getRootNode();
-        } else {
-            return $treeBuilder->root(self::ROOT_NAME);
-        }
     }
 }

@@ -12,13 +12,13 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class HttpClientErrorFilterMiddleware
 {
 
-    /** @var integer[] */
-    private $excludedHttpCodes;
+    /** @var array<string|number> */
+    private array $excludedHttpCodes;
 
     /**
-     * @param array $excludedHttpCodes
+     * @param array<string|number> $excludedHttpCodes
      */
-    public function __construct($excludedHttpCodes = [])
+    public function __construct(array $excludedHttpCodes = [])
     {
         $this->excludedHttpCodes = $excludedHttpCodes;
     }
@@ -26,10 +26,9 @@ class HttpClientErrorFilterMiddleware
     /**
      * @param Report $report the bugsnag report instance
      * @param callable $next the next stage callback
-     *
      * @return void
      */
-    public function __invoke(Report $report, callable $next)
+    public function __invoke(Report $report, callable $next): void
     {
         if (is_a($report->getOriginalError(), HttpException::class, true)) {
             /** @var HttpException $httpException */
@@ -43,16 +42,13 @@ class HttpClientErrorFilterMiddleware
         $next($report);
     }
 
-    /**
-     * @param int $statusCode
-     * @return bool
-     */
-    private function shouldExclude($statusCode)
+    private function shouldExclude(int $statusCode): bool
     {
         foreach ($this->excludedHttpCodes as $excludedHttpCode) {
             if (is_int($excludedHttpCode) && $statusCode === $excludedHttpCode) {
                 return true;
-            } else if (is_string($excludedHttpCode) && $this->matchGlobStatus($statusCode, $excludedHttpCode)) {
+            }
+            if (is_string($excludedHttpCode) && $this->matchGlobStatus($statusCode, $excludedHttpCode)) {
                 return true;
             }
         }
@@ -60,12 +56,7 @@ class HttpClientErrorFilterMiddleware
         return false;
     }
 
-    /**
-     * @param int $statusCode
-     * @param string $globPattern
-     * @return bool
-     */
-    private function matchGlobStatus($statusCode, $globPattern)
+    private function matchGlobStatus(int $statusCode, string $globPattern): bool
     {
         $pattern = "#" . str_replace("x", "\\d", $globPattern) . "#";
         return preg_match($pattern, $statusCode);
