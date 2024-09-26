@@ -2,6 +2,7 @@
 
 namespace Beapp\Bugsnag\Ext\Factory;
 
+use Beapp\Bugsnag\Ext\Middleware\ErrorFilterMiddleware;
 use Beapp\Bugsnag\Ext\Middleware\HandledErrorMiddleware;
 use Beapp\Bugsnag\Ext\Middleware\HttpClientErrorFilterMiddleware;
 use Bugsnag\Client;
@@ -16,12 +17,14 @@ class ClientConfigurator
      */
     public function __construct(Client                          $bugsnagClient,
                                 HandledErrorMiddleware          $handledErrorMiddleware,
+                                ErrorFilterMiddleware           $errorFilterMiddleware,
                                 HttpClientErrorFilterMiddleware $httpClientErrorMiddleware,
                                 array                           $extraMiddlewares)
     {
         $this->bugsnagClient = $bugsnagClient;
 
         $this->bugsnagClient->registerMiddleware($handledErrorMiddleware);
+        $this->bugsnagClient->registerMiddleware($errorFilterMiddleware);
         $this->bugsnagClient->registerMiddleware($httpClientErrorMiddleware);
         foreach ($extraMiddlewares as $extraMiddleware) {
             $this->bugsnagClient->registerMiddleware($extraMiddleware);

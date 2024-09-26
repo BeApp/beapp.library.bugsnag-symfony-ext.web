@@ -5,15 +5,21 @@ services:
     arguments:
       - '@bugsnag_ext.factory_decorator.inner'
       - '@bugsnag_ext.middleware.handled_error'
-      - '@bugsnag_ext.middleware.http_client_error'
+      - '@bugsnag_ext.middleware.error_filter'
+      - '@bugsnag_ext.middleware.http_client_error_filter'
 
   # Middleware
   bugsnag_ext.middleware.handled_error:
     class: 'Beapp\Bugsnag\Ext\Middleware\HandledErrorMiddleware'
     arguments:
       - '%bugsnag_ext.handled_exceptions%'
+      -
+  bugsnag_ext.middleware.error_filter:
+    class: 'Beapp\Bugsnag\Ext\Middleware\ErrorFilterMiddleware'
+    arguments:
+      - '%bugsnag_ext.excluded_exceptions%'
 
-  bugsnag_ext.middleware.http_client_error:
+  bugsnag_ext.middleware.http_client_error_filter:
     class: 'Beapp\Bugsnag\Ext\Middleware\HttpClientErrorFilterMiddleware'
     arguments:
       - '%bugsnag_ext.excluded_http_codes%'

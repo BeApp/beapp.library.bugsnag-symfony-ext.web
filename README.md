@@ -20,6 +20,8 @@ Add the following configuration :
 bugsnag_ext:
   handled_exceptions:
     - 'App\Exception\LogicException'
+  excluded_exceptions:
+    - 'App\Exception\NotSoImportantException'
   excluded_http_codes: ["4xx", 301]
   session_per_request: true
 ```
@@ -27,5 +29,6 @@ bugsnag_ext:
 ## Features
 
 * `handled_exceptions` : The exceptions matching one these will be forced to be notified as handled on Bugsnag platform
+* `excluded_exceptions` : Ignore some specific exceptions
 * `excluded_http_codes` : Ignore exceptions matching specific Http response status code. Use "x" as a placeholder for any number.
 * `session_per_request` : Register a listener to start a session for every request 
