@@ -5,6 +5,7 @@ namespace Beapp\Bugsnag\Ext\Middleware;
 use Bugsnag\Report;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class HttpClientErrorFilterMiddlewareTest extends TestCase
 {
@@ -56,6 +57,19 @@ class HttpClientErrorFilterMiddlewareTest extends TestCase
 
         $report = $this->createMock(Report::class);
         $report->expects($this->atLeast(1))->method('getOriginalError')->willReturn(new HttpException(401));
+
+        $next = function () {
+            self::fail('Next should not be called');
+        };
+        $handledErrorMiddleware($report, $next);
+    }
+
+    public function testInvoke_matchExceptionWithAttribute()
+    {
+        $handledErrorMiddleware = new HttpClientErrorFilterMiddleware(['4xx']);
+
+        $report = $this->createMock(Report::class);
+        $report->expects($this->atLeast(1))->method('getOriginalError')->willReturn(new AccessDeniedException());
 
         $next = function () {
             self::fail('Next should not be called');

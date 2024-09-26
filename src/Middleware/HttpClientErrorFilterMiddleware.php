@@ -3,6 +3,9 @@
 namespace Beapp\Bugsnag\Ext\Middleware;
 
 use Bugsnag\Report;
+use ReflectionAttribute;
+use ReflectionException;
+use Symfony\Component\HttpKernel\Attribute\WithHttpStatus;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -27,17 +30,35 @@ class HttpClientErrorFilterMiddleware
      * @param Report $report the bugsnag report instance
      * @param callable $next the next stage callback
      * @return void
+     * @throws ReflectionException
      */
     public function __invoke(Report $report, callable $next): void
     {
-        if (is_a($report->getOriginalError(), HttpException::class, true)) {
+        $throwable = $report->getOriginalError();
+
+        // Handle classic HttpException
+        if (is_a($throwable, HttpException::class, true)) {
             /** @var HttpException $httpException */
-            $httpException = $report->getOriginalError();
+            $httpException = $throwable;
 
             if ($this->shouldExclude($httpException->getStatusCode())) {
                 return;
             }
         }
+
+        // Handle exceptions with #[WithHttpStatus] attribute
+        $class = new \ReflectionClass($throwable);
+        do {
+            if ($attributes = $class->getAttributes(WithHttpStatus::class, ReflectionAttribute::IS_INSTANCEOF)) {
+                /** @var WithHttpStatus $instance */
+                $instance = $attributes[0]->newInstance();
+
+                if ($this->shouldExclude($instance->statusCode)) {
+                    return;
+                }
+                break;
+            }
+        } while ($class = $class->getParentClass());
 
         $next($report);
     }
